@@ -18,7 +18,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 app.listen(3000, () => {
-    console.log("running");
+    console.log("running on http://localhost:3000/");
 });
 
 module.exports = app;
