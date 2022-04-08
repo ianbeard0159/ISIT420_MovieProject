@@ -72,7 +72,7 @@ router.post('/Create', function(req, res) {
 
 });
 
-router.get('/SubmitOne', function(req, res) {
+router.post('/SubmitOne', function(req, res) {
   res.send(GenerateEntries(5));
 });
 
