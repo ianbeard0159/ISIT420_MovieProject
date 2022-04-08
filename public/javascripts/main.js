@@ -1,115 +1,150 @@
-// Random order generation functions
 
+let movieArray = [];
 
-let OrderObject = function (_StoreID, _SalesPersonID, _CdID, _PricePaid, _Date) {
-  this.StoreID = _StoreID;
-  this.SalesPersonID = _SalesPersonID;
-  this.CdID = _CdID;
-  this.PricePaid = _PricePaid;
-  this.Date = _Date;
+// define a constructor to create movie objects
+let MovieObject = function (pTitle, pYear, pGenre, pMan, pWoman, pURL) {
+    this.ID = Math.random().toString(16).slice(5)  // tiny chance could get duplicates!
+    this.Title = pTitle;
+    this.Year = pYear;
+    this.Genre = pGenre;  // action  comedy  drama  horrow scifi  musical  western
 }
 
-// Add 5 to 30 minutes to the input date object
-function IncreaseDateValue(_prevDate) {
-  const rndTime = 5 + Math.floor(Math.random() * 26);
-  const returnDate = new Date();
-  returnDate.setMinutes(_prevDate.getMinutes() + rndTime);
-  return returnDate;
-}
+let selectedGenre = "not selected";
 
-// Create a single random order
-function CreateRandomOrder(_date) {
-  // Arrays of valid IDs that can be randomly picked from
-  const validStores = [
-    {id: 98053, employees: [1, 2, 3, 4]},
-    {id: 98007, employees: [5, 6, 7, 8]}, 
-    {id: 98077, employees: [9, 10, 11, 12]}, 
-    {id: 98055, employees: [13, 14, 15, 16]}, 
-    {id: 98011, employees: [17, 18, 19, 20]}, 
-    {id: 98064, employees: [21, 22, 23, 24]}
-  ];
-  const validCdIDs = [123456, 123654, 321456, 321654, 654123, 654321, 543216, 354126, 621453, 623451];
-  
-  // Generate random indexes for choosing random values from arrays
-  const rndStoreIndex = Math.floor(Math.random() * validStores.length);
-  const rndCdIndex = Math.floor(Math.random() * validCdIDs.length);
-  const rndSalesPersonIndex = Math.floor(Math.random() * 4);
-
-  // Generate random values for the new order object
-  const rndStoreId = validStores[rndStoreIndex].id;
-  const rndCdId = validCdIDs[rndCdIndex];
-  const rndSalesPersonId = validStores[rndStoreIndex].employees[rndSalesPersonIndex];
-  const rndPricePaid = 5 + Math.floor(Math.random() * 11);
-
-  return new OrderObject(rndStoreId, rndSalesPersonId, rndCdId, rndPricePaid, _date);
-}
-
-// Generate an array of random entries
-function GenerateEntries(_numEntries) {
-  // Set the initial date to the current date/time
-  let date = new Date();
-  let entries = [];
-
-  // Add a given number of random entries to the array
-  for (let i = 0; i < _numEntries; i++) {
-    entries.push(CreateRandomOrder(date));
-    date = IncreaseDateValue(date);
-  }
-
-  return entries;
-
-}
-// End random order generation files
-
-
-//document functions
 document.addEventListener("DOMContentLoaded", function () {
 
-  //get input objects
-  inStoreID = document.getElementById("inStoreID");
-  inSPID = document.getElementById("inSalesPersonID");
-  inCdID = document.getElementById("inCdID");
-  inPPaid = document.getElementById("inPricePaid");
-  inDate = document.getElementById("inDate");
+    createList();
 
 // add button events ************************************************************************
+    
+    document.getElementById("buttonAdd").addEventListener("click", function () {
+        let newMovie = new MovieObject(document.getElementById("title").value, 
+        document.getElementById("year").value, selectedGenre);
+
+        fetch('/AddMovie', {
+            method: "POST",
+            body: JSON.stringify(newMovie),
+            headers: {"Content-type": "application/json; charset=UTF-8"}
+            })
+            .then(response => response.json()) 
+            .then(json => console.log(json),
+            createList()
+            )
+            .catch(err => console.log(err));
+    
+        // $.ajax({
+        //     url : "/AddMovie",
+        //     type: "POST",
+        //     data: JSON.stringify(newMovie),
+        //     contentType: "application/json; charset=utf-8",
+        //      success: function (result) {
+        //         console.log(result);
+        //         createList();
+        //     }
+        // });
+       
+    });
+
+    document.getElementById("buttonGet").addEventListener("click", function () {
+        createList();      
+    });
+
+    document.getElementById("buttonDelete").addEventListener("click", function () {
+        deleteMovie(document.getElementById("deleteID").value);      
+    });
+    
+    document.getElementById("buttonClear").addEventListener("click", function () {
+        document.getElementById("title").value = "";
+        document.getElementById("year").value = "";
+    });
+
+    $(document).bind("change", "#select-genre", function (event, ui) {
+        selectedGenre = $('#select-genre').val();
+    });
+
   
-  //Create button will take a random CD Order and post it to the webpage
-  document.getElementById("btnCreate").addEventListener("click", function (){
-     let order = CreateRandomOrder(new Date());
-          inStoreID.value =  order.StoreID;
-          inSPID.value = order.SalesPersonID;
-          inCdID.value = order.CdID;
-          inPPaid.value = order.PricePaid;
-          inDate.value = order.Date;
-  });
-
-  //Used to submit one CD order temporally
-  document.getElementById("btnAddOne").addEventListener("click", function (){
-    let order = CreateRandomOrder(new Date());
-      fetch('/SubmitOne', {
-          method: "POST",
-          body: JSON.stringify(order),
-          headers: {"Content-type": "application/json; charset=UTF-8"}
-          })
-          .then(response => response.json()) 
-          .then(json => console.log(json))
-          .catch(err => console.log(err));
-  });
-
-  //used to submit 500 orders to a writen file.
-  document.getElementById("btnAllOrders").addEventListener("click", function (){
-      let orders = GenerateEntries(500);
-      fetch('/Submit500', {
-        method: "POST",
-        body: JSON.stringify(orders),
-        headers: {"Content-type": "application/json; charset=UTF-8"}
-      })
-          .then(response => response.json()) 
-          .then(json => console.log(json),
-          )
-          .catch(err => console.log(err));
-  });
 
 });  
 // end of wait until document has loaded event  *************************************************************************
+
+
+function createList() {
+// update local array from server
+
+    fetch('/getAllMovies')
+    // Handle success
+    .then(response => response.json())  // get the data out of the response object
+    .then( responseData => fillUL(responseData))    //update our array and li's
+    .catch(err => console.log('Request Failed', err)); // Catch errors
+
+    // $.get("/getAllMovies", function(data, status){  // AJAX get
+    //     movieArray = data;  // put the returned server json data into our local array
+        
+    //       // clear prior data
+    //     var divMovieList = document.getElementById("divMovieList");
+    //     while (divMovieList.firstChild) {    // remove any old data so don't get duplicates
+    //         divMovieList.removeChild(divMovieList.firstChild);
+    //     };
+
+    //     var ul = document.createElement('ul');
+
+    //     movieArray.forEach(function (element,) {   // use handy array forEach method
+    //         var li = document.createElement('li');
+    //         li.innerHTML = element.ID + ":  &nbsp &nbsp  &nbsp &nbsp " + 
+    //         element.Title + "  &nbsp &nbsp  &nbsp &nbsp "  
+    //         + element.Year + " &nbsp &nbsp  &nbsp &nbsp  " + element.Genre;
+    //         ul.appendChild(li);
+    //     });
+    //     divMovieList.appendChild(ul)
+
+    // });
+};
+
+function fillUL(data) {
+        // clear prior data
+    var divMovieList = document.getElementById("divMovieList");
+    while (divMovieList.firstChild) {    // remove any old data so don't get duplicates
+        divMovieList.removeChild(divMovieList.firstChild);
+    };
+
+    var ul = document.createElement('ul');
+    movieArray = data;
+    movieArray.forEach(function (element,) {   // use handy array forEach method
+        var li = document.createElement('li');
+        li.innerHTML = element.ID + ":  &nbsp &nbsp  &nbsp &nbsp " + 
+        element.Title + "  &nbsp &nbsp  &nbsp &nbsp "  
+        + element.Year + " &nbsp &nbsp  &nbsp &nbsp  " + element.Genre;
+        ul.appendChild(li);
+    });
+    divMovieList.appendChild(ul)
+}
+
+function deleteMovie(ID) {
+
+    fetch('/DeleteMovie/' + ID, {
+        method: "DELETE",
+       // body: JSON.stringify(_data),
+        headers: {"Content-type": "application/json; charset=UTF-8"}
+      })
+      .then(response => response.json()) 
+      .then(json => console.log(json))
+      .catch(err => console.log(err));
+
+
+
+    // $.ajax({
+    //     type: "DELETE",
+    //     url: "/DeleteMovie/" +ID,
+    //     success: function(result){
+    //         alert(result);
+    //         createList();
+    //     },
+    //     error: function (xhr, textStatus, errorThrown) {  
+    //         alert("Server could not delete Movie with ID " + ID)
+    //     }  
+    // });
+   
+}
+
+
+  

@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var fs = require("fs");
+var path = require("path");
 
 let OrderObject = function (_StoreID, _SalesPersonID, _CdID, _PricePaid, _Date) {
   this.StoreID = _StoreID;
@@ -63,7 +64,7 @@ function GenerateEntries(_numEntries) {
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+  res.sendFile(path.join(`${__dirname}/../public/users.html`));
 });
 
 router.post('/Create', function(req, res) {
@@ -73,13 +74,12 @@ router.post('/Create', function(req, res) {
 });
 
 router.post('/SubmitOne', function(req, res) {
-  res.send(GenerateEntries(5));
+  console.log(req.body);
 });
 
-router.get('/Submit500', function(req, res) {
-  let data = JSON.stringify(GenerateEntries(500));
+router.post('/Submit500', function(req, res) {
+  let data = JSON.stringify(req.body);
   fs.writeFileSync('entries.json', data);
-  res.send("500");
 });
 
 module.exports = router;
