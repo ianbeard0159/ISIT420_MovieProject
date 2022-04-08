@@ -21,3 +21,12 @@ li {
   font-weight:    bold;
 }
 
+#labels{
+float: left;
+margin-right: 10px;
+}
+
+#inputs{
+}
+
+
