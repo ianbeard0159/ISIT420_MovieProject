@@ -63,7 +63,7 @@ function GenerateEntries(_numEntries) {
 }
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+/*router.get('/', function(req, res, next) {
   res.sendFile(path.join(`${__dirname}/../public/users.html`));
 });
 
@@ -80,6 +80,63 @@ router.post('/SubmitOne', function(req, res) {
 router.post('/Submit500', function(req, res) {
   let data = JSON.stringify(req.body);
   fs.writeFileSync('entries.json', data);
+}); */
+
+
+//************Mongo System******************* */
+
+const mongoose = require("mongoose");
+const OrderSchema = require("../Schema")
+const dbURI = "mongodb+srv://JunkLinda:NotFake2@isit420.8prru.mongodb.net/CDs?retryWrites=true&w=majority";
+
+mongoose.set("useFindAndModify", false);
+
+const options = {
+  reconnectTries: Number.MAX_VALUE,
+  poolSize: 10
+}
+
+mongoose.connect(dbURI, options).then(
+  () => {
+    console.log("Database connection established!");
+  },
+  err => {
+    console.log("Error connecting Database instance due to: ", err);
+  }
+);
+
+router.get('/', function(req, res, next) {
+  res.sendFile(path.join(`${__dirname}/../public/users.html`));
 });
+
+router.get('/getAllOrders', function(req, res){
+  OrderSchema.find({}, (err, allOrders) => {
+    if(err) {
+      console.log(err)
+      res.status(500).send(err);
+    }
+    res.status(200).json(allOrders);
+  })
+})
+
+router.post('/Submit500', function(req, res) {
+  let data = JSON.stringify(req.body);
+  let newOrder = new OrderSchema(data);
+  console.log(req.body);
+  newOrder.save((err) => {
+    if (err) {
+      res.status(500).send(err)
+    }
+    var response = {
+      status : 200,
+      success : 'Added Successfully' 
+    }
+    res.end(JSON.stringify(response));
+
+  })
+}); 
+
+//employee sold most cd
+//employee made the most money
 
 module.exports = router;
