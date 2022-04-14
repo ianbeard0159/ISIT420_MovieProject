@@ -87,7 +87,7 @@ router.post('/Submit500', function(req, res) {
 
 const mongoose = require("mongoose");
 const OrderSchema = require("../Schema")
-const dbURI = "mongodb+srv://JunkLinda:NotFake2@isit420.8prru.mongodb.net/CDs?retryWrites=true&w=majority";
+const dbURI = "mongodb+srv://JunkLinda:NotFake2@isit420.8prru.mongodb.net/OrdersCD?retryWrites=true&w=majority";
 
 mongoose.set("useFindAndModify", false);
 
@@ -120,21 +120,22 @@ router.get('/getAllOrders', function(req, res){
 })
 
 router.post('/Submit500', function(req, res) {
-  let data = JSON.stringify(req.body);
-  let newOrder = new OrderSchema(data);
-  console.log(req.body);
-  newOrder.save((err) => {
-    if (err) {
-      res.status(500).send(err)
-    }
-    var response = {
-      status : 200,
-      success : 'Added Successfully' 
-    }
-    res.end(JSON.stringify(response));
 
-  })
-}); 
+    let newOrder = new OrderSchema(req.body);
+    console.log(req.body);
+    console.log(newOrder);
+    newOrder.save((err) => {
+      if (err) {
+       res.status(500).send(err)
+      }
+      var response = {
+       status : 200,
+       success : 'Added Successfully' 
+      }
+      res.end(JSON.stringify(response));
+    })
+
+});
 
 //employee sold most cd
 //employee made the most money

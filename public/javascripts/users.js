@@ -100,16 +100,17 @@ document.addEventListener("DOMContentLoaded", function () {
   //used to submit 500 orders to a writen file.
   document.getElementById("btnAllOrders").addEventListener("click", function (){
       let orders = GenerateEntries(500);
+      for (let i = 0; i < orders.length; i++) {
       fetch('/users/Submit500', {
         method: "POST",
-        body: JSON.stringify(orders),
+        body: JSON.stringify(orders[i]),
         headers: {"Content-type": "application/json; charset=UTF-8"}
       })
           .then(response => response.json()) 
           .then(json => console.log(json),
           )
           .catch(err => console.log(err));
-  });
+  }});
 
 });  
 // end of wait until document has loaded event  *************************************************************************

@@ -10,7 +10,7 @@ const OrderSchema = new Schema({
         type: Number,
         required: true
     },
-    CDID: {
+    CdID: {
         type: Number,
         required: true
     },
@@ -19,9 +19,9 @@ const OrderSchema = new Schema({
         required: true
     },
     Date: {
-        type: Date,
+        type: String,
         required: true
-    },
+    }
 });
 
-module.exports = mongoose.model("OrdersCD", OrderSchema);
+module.exports = mongoose.model("CDs", OrderSchema);
