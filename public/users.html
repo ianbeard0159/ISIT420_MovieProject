@@ -1,43 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <title>CD Orders</title>
+  <head>
+    <meta charset="UTF-8">
+    <title>CD Orders</title>
 
-  <script src="javascripts/users.js"></script>
-  <link rel="stylesheet" type="text/css" href="stylesheets/index.css" >
-</head>
+    <script src="/javascripts/users.js"></script>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/index.css" >
+  </head>
 
-<body>
+  <body>
 
-<h2> CD Order System</h2>
- 
-<input type="button" value="CREATE" id="btnCreate"  /> <br />
-  
-<div id="container" >
-  <div id="labels">
-    StoreID: <br />
-    SalesPersonID:  <br />
-    CdID: <br />
-    PricePaid: <br />
-    Date: <br />
-  </div>
-  
-  <div id="inputs">
-  <input type="text" value="StoreID" id="inStoreID" /> <br />
-  <input type="text" value="SalesPersonID" id="inSalesPersonID" /> <br />
-  <input type="text" value="CdID" id="inCdID" /> <br />
-  <input type="text" value="PricePaid" id="inPricePaid" /> <br />
-  <input type="text" value="Date" id="inDate">
-  </div>
-<br />
-  
-  <input type="button" value="SUBMIT-ONE" id="btnAddOne" />
-  <input type="button" value="SUBMIT500" id="btnAllOrders" />
-</div>
+    <h2> CD Order System</h2>
+    
+    <input type="button" value="CREATE" id="btnCreate"  /> <br />
+      
+    <div id="container" >
+      <div id="labels">
+        StoreID: <br />
+        SalesPersonID:  <br />
+        CdID: <br />
+        PricePaid: <br />
+        Date: <br />
+      </div>
+      
+      <div id="inputs">
+      <input type="text" value="StoreID" id="inStoreID" /> <br />
+      <input type="text" value="SalesPersonID" id="inSalesPersonID" /> <br />
+      <input type="text" value="CdID" id="inCdID" /> <br />
+      <input type="text" value="PricePaid" id="inPricePaid" /> <br />
+      <input type="text" value="Date" id="inDate">
+      </div>
+    <br />
+      
+      <input type="button" value="SUBMIT-ONE" id="btnAddOne" />
+      <input type="button" value="SUBMIT500" id="btnAllOrders" />
+    </div>
+    <br>
+    <div id="query-container">
+      <input type="button" value="Who sold the most CDs?" id="btn-most-sold" />
+      <input type="button" value="Who made the most money?" id="btn-most-money" />
+      <div id="query-response-container"></div>
+    </div>
 
 
-</body>
+  </body>
 
 </html>

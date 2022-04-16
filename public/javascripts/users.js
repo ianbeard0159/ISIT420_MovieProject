@@ -1,5 +1,7 @@
 // Random order generation functions
 
+// import { response } from "../../app";
+
 
 let OrderObject = function (_StoreID, _SalesPersonID, _CdID, _PricePaid, _Date) {
   this.StoreID = _StoreID;
@@ -65,6 +67,10 @@ function GenerateEntries(_numEntries) {
 //document functions
 document.addEventListener("DOMContentLoaded", function () {
 
+  //
+  // Entry Submission
+  //
+
   //get input objects
   inStoreID = document.getElementById("inStoreID");
   inSPID = document.getElementById("inSalesPersonID");
@@ -111,6 +117,59 @@ document.addEventListener("DOMContentLoaded", function () {
           )
           .catch(err => console.log(err));
   }});
+
+  //
+  // Database Query Response
+  //
+  const queryResContainer = document.getElementById("query-response-container")
+
+  // "Who sold the most" clicked
+  document.getElementById("btn-most-sold").addEventListener("click", function () {
+    fetch('/users/mostCDs', {
+      method: "GET"
+    }).then(function(response) {
+      return response.json();
+    }).then(function(json) {
+      // Display the employee who made the most
+      let employeeString = '';
+      for (let i = 0; i < json.employees.length; i++) {
+        if (i != 0) employeeString += " and ";
+        employeeString += `Employee # ${json.employees[i]}`;
+      }
+      const headerString = `<p><b>Employee(s) who made sold the most CDs:</b> ${employeeString}</p>`;
+      const numString = `<p><b>CDs sold:</b> ${json.numSales} CDs</p>`;
+      let salesString = `<p><b>Sales Records:</b></p>`;
+      for(let sale in json.sales) {
+        salesString += `<p><b>StoreID:</b> ${json.sales[sale].StoreID} | <b>SalesPersonID:</b> ${json.sales[sale].SalesPersonID} | <b>CdID:</b> ${json.sales[sale].CdID} | <b>PricePaid:</b> ${json.sales[sale].PricePaid} | <b>Date:</b> ${json.sales[sale].Date}</p>`;
+      }
+
+      queryResContainer.innerHTML = headerString + numString + salesString;
+    });
+  });
+  
+  // "Who made the most money" clicked
+  document.getElementById("btn-most-money").addEventListener("click", function () {
+    fetch('/users/mostMoney', {
+      method: "GET"
+    }).then(function(response) {
+      return response.json();
+    }).then(function(json) {
+      // Display the employee who made the most
+      let employeeString = '';
+      for (let i = 0; i < json.employees.length; i++) {
+        if (i != 0) employeeString += " and ";
+        employeeString += `Employee # ${json.employees[i]}`;
+      }
+      const headerString = `<p><b>Employee(s) who made the most money:</b> ${employeeString}</p>`;
+      const totalString = `<p><b>Money earned:</b> $${json.total}</p>`;
+      let salesString = `<p><b>Sales Records:</b></p>`;
+      for(let sale in json.sales) {
+        salesString += `<p><b>StoreID:</b> ${json.sales[sale].StoreID} | <b>SalesPersonID:</b> ${json.sales[sale].SalesPersonID} | <b>CdID:</b> ${json.sales[sale].CdID} | <b>PricePaid:</b> ${json.sales[sale].PricePaid} | <b>Date:</b> ${json.sales[sale].Date}</p>`;
+      }
+
+      queryResContainer.innerHTML = headerString + totalString + salesString;
+    });
+  });
 
 });  
 // end of wait until document has loaded event  *************************************************************************
